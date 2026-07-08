@@ -92,7 +92,13 @@ ivw_rmvmr <- function(r_input, summary = TRUE) {
     }
   }
 
-  A_sum <- summary(stats::lm(tm.wr[, j] ~ -1 + ., tempdat))
+  #Fit the radial IVW model. The estimate is invariant to the choice of
+  #orientation, so fit the canonical model directly (outcome ratio weighted by
+  #wj regressed on the weighted exposure associations) rather than relying on
+  #the design matrix left over from the final loop iteration.
+  reg.response <- r_input[, 2] / r_input[, 3]
+  reg.design <- as.data.frame(exp.mat / r_input[, 3])
+  A_sum <- summary(stats::lm(reg.response ~ -1 + ., reg.design))
 
   A <- A_sum$coef
 
