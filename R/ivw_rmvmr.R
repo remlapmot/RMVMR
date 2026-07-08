@@ -54,48 +54,12 @@ ivw_rmvmr <- function(r_input, summary = TRUE) {
   exp.number <- length(names(r_input)[-c(1, 2, 3)]) / 2
 
   #Create subset of exposure summary data as a matrix for vectorised operations
-  exp.dat <- r_input[, 4:(3 + exp.number)]
-  exp.mat <- as.matrix(exp.dat)
-
-  #Calculate square root weights wj, ratio estimates, and weighted ratios
-  tm.weights <- abs(exp.mat) / r_input[, 3]
-  tm.ratios  <- r_input[, 2] / exp.mat
-  tm.wr      <- tm.weights * tm.ratios
-
-  #Create empty list for plotting data frames
-
-  t.list <- vector(mode = "list", length = exp.number)
-
-  # orientate data for X1
-
-  for (j in 1:exp.number) {
-    tm.oriented <- matrix(0L, nrow = length(r_input[, 1]), ncol = exp.number)
-
-    for (i in 1:(exp.number)) {
-      if (j == i) {
-        tm.oriented[, i] <- tm.weights[, i]
-      } else {
-        tm.oriented[, i] <- exp.dat[, i] * sign(exp.dat[, j])
-        tm.oriented[, i] <- tm.oriented[, i] / r_input[, 3]
-      }
-    }
-
-    tempdat <- data.frame(tm.oriented)
-
-    t.list[[j]] <- cbind(tm.wr[, j], tempdat)
-
-    names(t.list[[j]])[1] <- paste0("Bwj_", j, collapse = "")
-
-    #Rename columns for ease of interpretation
-    for (i in 1:exp.number) {
-      names(t.list[[j]])[i + 1] <- paste0("wj_", i, collapse = "")
-    }
-  }
+  exp.mat <- as.matrix(r_input[, 4:(3 + exp.number)])
 
   #Fit the radial IVW model. The estimate is invariant to the choice of
-  #orientation, so fit the canonical model directly (outcome ratio weighted by
-  #wj regressed on the weighted exposure associations) rather than relying on
-  #the design matrix left over from the final loop iteration.
+  #orientation, so fit the canonical model directly: the outcome association
+  #weighted by the outcome standard error regressed on the exposure
+  #associations weighted the same way, with no intercept.
   reg.response <- r_input[, 2] / r_input[, 3]
   reg.design <- as.data.frame(exp.mat / r_input[, 3])
   A_sum <- summary(stats::lm(reg.response ~ -1 + ., reg.design))
@@ -126,7 +90,7 @@ ivw_rmvmr <- function(r_input, summary = TRUE) {
   }
 
   multi_return <- function() {
-    Out_list <- list("coef" = A, "data" = t.list)
+    Out_list <- list("coef" = A)
     class(Out_list) <- "IVW_RMVMR"
 
     return(Out_list)
