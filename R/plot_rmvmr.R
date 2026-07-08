@@ -53,48 +53,9 @@ plot_rmvmr <- function(r_input, rmvmr, cordat = NULL) {
 
   exp.number <- length(names(r_input)[-c(1, 2, 3)]) / 2
 
-  f.vec <- matrix(0L, nrow = length(r_input[, 1]), ncol = exp.number)
-
-  for (i in 1:exp.number) {
-    f.vec[, i] <- as.integer(r_input[, 3 + i]^2 / r_input[, 3 + exp.number + i]^2 >= 10)
-  }
-
-  Xlist <- vector("list", exp.number)
-
-  for (i in 1:exp.number) {
-    #Format data for univariate MR using significant SNPs for each exposure
-    Xsub <- r_input[f.vec[, i] == 1, ]
-    Xrad.dat <- RadialMR::format_radial(
-      Xsub[, 3 + i],
-      Xsub[, 2],
-      Xsub[, 3 + exp.number + i],
-      Xsub[, 3],
-      Xsub[, 1]
-    )
-    Xlist[[i]] <- RadialMR::ivw_radial(
-      Xrad.dat,
-      0.05 / nrow(Xrad.dat),
-      1,
-      0.0001,
-      FALSE
-    )
-  }
-
-  p.list <- vector("list", exp.number)
-
-  for (i in 1:exp.number) {
-    Xdat <- data.frame(Xlist[[i]][5])
-    Xdat$Group <- i
-    names(Xdat) <- c("SNP", "Wj", "BetaWj", "Qj", "Qj_Chi", "Outliers", "Group")
-    p.list[[i]] <- Xdat
-  }
-  p.dat <- do.call(rbind, p.list)
-
-  p.dat[, 7] <- as.factor(p.dat[, 7])
-
-  for (i in 1:exp.number) {
-    levels(p.dat[, 7])[i] <- paste0("Exposure_", i, collapse = "")
-  }
+  #Univariate radial MR data for each exposure (F>10 SNPs), reused below for the
+  #correction plot to avoid recomputing the same RadialMR analyses.
+  p.dat <- rmvmr_univariate_radial(r_input, exp.number)
 
   cpalette <- c(
     "#E69F00",
@@ -146,7 +107,9 @@ plot_rmvmr <- function(r_input, rmvmr, cordat = NULL) {
   #### Correction Plot
 
   if (is.null(cordat)) {
-    cordat <- pleiotropy_rmvmr(r_input, rmvmr)
+    #Reuse the univariate radial results already computed for the first plot
+    #rather than recomputing them inside pleiotropy_rmvmr().
+    cordat <- rmvmr_correction(r_input, rmvmr$coef, exp.number, p.dat)
   }
 
   p.dat <- cordat$qdat
