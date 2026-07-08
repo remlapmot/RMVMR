@@ -6,7 +6,7 @@
 #' @param BYG A numeric vector of beta-coefficient values for genetic associations with the outcome.
 #' @param seBXGs A matrix containing standard errors corresponding to the matrix of beta-coefficients \code{BXGs}.
 #' @param seBYG A numeric vector of standard errors corresponding to the beta-coefficients \code{BYG}.
-#' @param RSID A vector of names for genetic variants included in the analysis. If variant IDs are not provided (\code{RSID="NULL"}), a vector of ID numbers will be generated.
+#' @param RSID A vector of names for genetic variants included in the analysis. If variant IDs are not provided (the argument is omitted or \code{RSID=NULL}), a vector of ID numbers will be generated.
 #' @return A formatted data frame with additional classes `rmvmr_format` and `mvmr_format`
 #'
 #' @author Wes Spiller; Eleanor Sanderson; Jack Bowden.
@@ -30,7 +30,7 @@ format_rmvmr <- function(BXGs, BYG, seBXGs, seBYG, RSID) {
   #If no instrument-identification vector is provided, a set of placeholder values
   #is produced. A warning is also given to indicate no values were provided
 
-  if (missing(RSID)) {
+  if (missing(RSID) || is.null(RSID)) {
     RSID <- seq_along(BYG)
     warning("Missing SNP IDs; Generating placeholders")
   }

@@ -15,7 +15,7 @@ format_rmvmr(BXGs, BYG, seBXGs, seBYG, RSID)
 
 \item{seBYG}{A numeric vector of standard errors corresponding to the beta-coefficients \code{BYG}.}
 
-\item{RSID}{A vector of names for genetic variants included in the analysis. If variant IDs are not provided (\code{RSID="NULL"}), a vector of ID numbers will be generated.}
+\item{RSID}{A vector of names for genetic variants included in the analysis. If variant IDs are not provided (the argument is omitted or \code{RSID=NULL}), a vector of ID numbers will be generated.}
 }
 \value{
 A formatted data frame with additional classes \code{rmvmr_format} and \code{mvmr_format}
