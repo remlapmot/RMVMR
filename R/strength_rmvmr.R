@@ -52,7 +52,7 @@ strength_rmvmr <- function(r_input, gencov = 0) {
     )
   }
 
-  if (!is.list(gencov) && gencov == 0) {
+  if (is.numeric(gencov) && length(gencov) == 1 && gencov == 0) {
     warning(
       "Covariance between effect of genetic variants on each exposure not specified. Fixing covariance at 0."
     )
