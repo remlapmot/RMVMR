@@ -2,15 +2,15 @@
 
 ## Authors
 
-- **Wes Spiller**. Author, maintainer.
-  [](https://orcid.org/0000-0002-8169-5531)
+- **Wes Spiller**. Author. [](https://orcid.org/0000-0002-8169-5531)
 
 - **Jack Bowden**. Author. [](https://orcid.org/0000-0003-2628-3304)
 
 - **Eleanor Sanderson**. Author.
   [](https://orcid.org/0000-0001-5188-5775)
 
-- **Tom Palmer**. Author. [](https://orcid.org/0000-0003-4655-4511)
+- **Tom Palmer**. Author, maintainer.
+  [](https://orcid.org/0000-0003-4655-4511)
 
 ## Citation
 
