@@ -13,3 +13,4 @@
 ^\.github$
 ^\.lintr$
 ^docs$
+^justfile$
